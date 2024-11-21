@@ -1,5 +1,5 @@
 import { registrarMercancia } from "../services/servicioRegistrarMercancia.js";
-import { consultarMercancias } from "../services/servicioConsultarMercancia.js";
+import { consultarMercancia } from "../services/servicioConsultarMercancia.js";
 
 
 let botonRegistroMercancia = document.getElementById('botonRegistroMercancia');
@@ -13,19 +13,20 @@ let nombreDestinatarioMercancia = document.getElementById('nombredestinatariomer
 let direccionMercancia = document.getElementById('direccionmercancia');
 let fechaIngresoMercancia = document.getElementById('fechaingresomercancia');
 let fechaSalidaMercancia = document.getElementById('fechasalidamercancia');
+let nombreZonaMercancia = document.getElementById('nombreZona');
 let idBodega = 0;
 
 
-document.getElementById('bodega').addEventListener('change', function() {
+document.getElementById('bodega').addEventListener('change', function () {
     idBodega = this.value;
     console.log("ID de la bodega seleccionada:", idBodega)
-    
+
 });
 
 
 //detectar evento click en el boton de registro de mercancia
 
-botonRegistroMercancia.addEventListener('click', function(evento) {
+botonRegistroMercancia.addEventListener('click', function (evento) {
     evento.preventDefault();
     let objetoMercancia = {
         peso: pesoMercancia.value,
@@ -38,6 +39,7 @@ botonRegistroMercancia.addEventListener('click', function(evento) {
         direccion: direccionMercancia.value,
         fechaIngreso: fechaIngresoMercancia.value,
         fechaSalida: fechaSalidaMercancia.value,
+        nombreZona: nombreZonaMercancia.value,
         zonaBodega: {
             idZona: idBodega
         }
@@ -45,7 +47,7 @@ botonRegistroMercancia.addEventListener('click', function(evento) {
 
     //Llmando a la API
     try {
-        if (objetoMercancia.peso === "" || objetoMercancia.volumen === "" || objetoMercancia.nombre === "" || objetoMercancia.tipoDestinatario === "" || objetoMercancia.departamento === "" || objetoMercancia.ciudad === "" || objetoMercancia.nombreDestinatario === "" || objetoMercancia.direccion === "" || objetoMercancia.fechaIngreso === "" || objetoMercancia.fechaSalida === "" || objetoMercancia.zonaBodega === "") {
+        if (objetoMercancia.peso === "" || objetoMercancia.volumen === "" || objetoMercancia.nombre === "" || objetoMercancia.tipoDestinatario === "" || objetoMercancia.departamento === "" || objetoMercancia.ciudad === "" || objetoMercancia.nombreDestinatario === "" || objetoMercancia.direccion === "" || objetoMercancia.fechaIngreso === "" || objetoMercancia.fechaSalida === "" || objetoMercancia.zonaBodega.nombreZona === "") {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
@@ -55,64 +57,78 @@ botonRegistroMercancia.addEventListener('click', function(evento) {
         }
         console.log("Objeto mercancia:", objetoMercancia);
         registrarMercancia(objetoMercancia)
-        .then(function(respuesta){
-            if(respuesta){
-                Swal.fire({
-                    title: "Buen trabajo!",
-                    text: "Mercancía registrada exitosamente",
-                    icon: "success"
-                });
-            }
-        });
+            .then(function (respuesta) {
+                if (respuesta) {
+                    Swal.fire({
+                        title: "Buen trabajo!",
+                        text: "Mercancía registrada exitosamente",
+                        icon: "success"
+                    });
+                }
+            });
     } catch (error) {
-        console.log(error)    
+        console.log(error)
     }
 
 });
 
 
-let filatabla=document.getElementById('filatabla')
-consultarMercancias()
-.then(function(respuesta){
-    console.log("La respuesta de mercancía es: ", respuesta)
-    if(Array.isArray(respuesta)){
-        respuesta.forEach(function(mercancia){
-        
-            let fila=document.createElement('tr');
-    
-            let columna1=document.createElement('td');
-            columna1.textContent=mercancia.nombre;
-    
-            let columna2=document.createElement('td');
-            columna2.textContent=mercancia.volumen;
+let filatabla = document.getElementById('filatabla');
 
-            let columna3=document.createElement('td');
-            columna3.textContent=mercancia.peso;
+consultarMercancia()
+    .then(function (respuesta) {
+        console.log("La respuesta de mercancía es: ", respuesta);
+        if (Array.isArray(respuesta)) {
+            respuesta.forEach(function (mercancia) {
 
-            let columna4=document.createElement('td');
-            columna4.textContent=mercancia.ciudad;
+                // Verificar la propiedad nombreZona directamente en el objeto mercancia
+                console.log("Zona Bodega:", mercancia.nombreZona); // Ver para depuración
 
-            let columna5=document.createElement('td');
-            columna5.textContent=mercancia.direccion;
+                let fila = document.createElement('tr');
 
-            let columna6=document.createElement('td');
-            columna6.textContent=mercancia.fechaIngreso;
+                let columna1 = document.createElement('td');
+                columna1.textContent = mercancia.nombre;
 
-            let columna7=document.createElement('td');
-            columna7.textContent=mercancia.zonaBodega;
+                let columna2 = document.createElement('td');
+                columna2.textContent = mercancia.volumen;
 
-            fila.appendChild(columna1);
-            fila.appendChild(columna2);
-            fila.appendChild(columna3);
-            fila.appendChild(columna4);
-            fila.appendChild(columna5);
-            fila.appendChild(columna6);
-            fila.appendChild(columna7);
-            filatabla.appendChild(fila)
-    
-        });
-    }
-})
+                let columna3 = document.createElement('td');
+                columna3.textContent = mercancia.peso;
+
+                let columna4 = document.createElement('td');
+                columna4.textContent = mercancia.ciudad;
+
+                let columna5 = document.createElement('td');
+                columna5.textContent = mercancia.direccion;
+
+                let columna6 = document.createElement('td');
+                columna6.textContent = mercancia.fechaIngreso;
+
+                let columna7 = document.createElement('td');
+
+                // Acceder directamente a nombreZona, ya que está en el objeto mercancia
+                if (mercancia.nombreZona) {
+                    columna7.textContent = mercancia.nombreZona;  // Mostrar la zona correcta
+                } else {
+                    columna7.textContent = 'Zona desconocida'; // Si no está, muestra el mensaje
+                }
+
+                fila.appendChild(columna1);
+                fila.appendChild(columna2);
+                fila.appendChild(columna3);
+                fila.appendChild(columna4);
+                fila.appendChild(columna5);
+                fila.appendChild(columna6);
+                fila.appendChild(columna7);
+                filatabla.appendChild(fila);
+            });
+        }
+    })
+    .catch(function(error) {
+        console.error("Error al consultar mercancías:", error);
+    });
+
+
 
 
 

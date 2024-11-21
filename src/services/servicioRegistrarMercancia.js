@@ -1,6 +1,6 @@
 export async function registrarMercancia(datosMercancia){
     //1. Crear la URL del servicio
-    const URL = "http://localhost:8080/soluciontcc/v1/mercancias";
+    const URL = "http://localhost:8080/soluciontcc/v1/mercancia";
     //2. Configuración de la petición de envío de datos
     let peticion = {
         method: 'POST',

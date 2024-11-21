@@ -1,4 +1,4 @@
-export async function consultarMercancias(){
+export async function consultarMercancia(){
     const URL = "http://localhost:8080/soluciontcc/v1/mercancia";
     let peticion = {
         method: 'GET',
